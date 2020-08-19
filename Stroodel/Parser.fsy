@@ -1,0 +1,7 @@
+%{
+open Syntax
+%}
+
+%token VariableReference
+%token AtomType
+%token AtomLiteral

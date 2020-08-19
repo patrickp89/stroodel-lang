@@ -8,4 +8,5 @@ let Setup () =
 
 [<Test>]
 let Test1 () =
-    Assert.Pass()
+    let b = true
+    Assert.That(b, Is.EqualTo true)

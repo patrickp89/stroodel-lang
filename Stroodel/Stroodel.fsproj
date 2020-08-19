@@ -1,10 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <!--<FsYacc Include="Parser.fsy">
+      <OtherFlags>module Parser</OtherFlags>
+    </FsYacc>-->
     <Compile Include="Library.fs" />
   </ItemGroup>
 
