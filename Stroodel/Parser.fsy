@@ -1,7 +1,25 @@
 %{
-open Syntax
+open Stroodel.Syntax
 %}
 
-%token VariableReference
-%token AtomType
-%token AtomLiteral
+%token VARIABLEREFERENCE
+%token ATOMTYPE
+%token ATOMLITERAL
+
+%token <string> SYMBOL
+
+// symbolic tokens:
+%token TICK
+%token EOF
+
+// the parser returns an _Expr_:
+%start start
+%type < Expr > start
+
+%%
+
+start: File EOF { $1 }
+
+File:
+	| TICK SYMBOL				{ AtomLiteral ("'" + $2) }
+	| VARIABLEREFERENCE SYMBOL	{ VariableReference $2 }

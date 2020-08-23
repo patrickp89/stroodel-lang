@@ -331,3 +331,8 @@ ASALocalRun/
 
 # Ionide
 .ionide/
+
+# Project-specific stuff
+Stroodel/Parser.fs
+Stroodel/Parser.fsi
+Stroodel/Lexer.fs
