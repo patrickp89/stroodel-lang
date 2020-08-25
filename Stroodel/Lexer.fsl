@@ -1,11 +1,36 @@
 {
 open FSharp.Text.Lexing
+open Stroodel.Util
 
 let text (lexbuf: LexBuffer<_>) =
   LexBuffer<_>.LexemeString lexbuf
 
+let dummyInfo = Error.Info.UNKNOWN
+
+let info _ =
+  dummyInfo // TODO: create a proper Error.Info!
+
 let newline (lexbuf: LexBuffer<_>) =
   lexbuf.StartPos <- lexbuf.StartPos.NextLine
+
+let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
+  [("the", fun _ -> Parser.THE);
+    ("List", fun _ -> Parser.LIST);
+    ("Nat", fun _ -> Parser.NAT);
+    ("nil", fun _ -> Parser.NIL);
+    ("cons", fun _ -> Parser.CONS);
+    ("same", fun _ -> Parser.SAME);
+    ("sole", fun _ -> Parser.SOLE);
+    ("(", fun _ -> Parser.LPAREN);
+    (")", fun _ -> Parser.RPAREN)]
+  |> Map.ofList
+
+// Looks up the build function from our hash table
+// or creates an arbitrary ID:
+let createId s i =
+  match Map.tryFind s keywordsAndSymbols with
+  | Some f -> f i
+  | None -> Parser.ID s
 }
 
 // auxiliary tokens:
@@ -14,10 +39,15 @@ let digit       = ['0'-'9']
 let whitespace  = [' ' '\t' ]
 let newline     = ('\n' | '\r' '\n')
 let id          = char+ ('-' char+)*
+let arrow       = '→'
+let bigpi       = 'Π'
+let bigsigma    = 'Σ'
+let lambda      = 'λ'
+let universe    = 'U'
 
 // tokenizer rules:
 rule tokenstream = parse
-| id                { Parser.SYMBOL (text lexbuf) }
+| id                { createId (text lexbuf) (info lexbuf) }
 | "'"               { Parser.TICK}
 | whitespace        { tokenstream lexbuf }
 | newline           { newline lexbuf; tokenstream lexbuf }

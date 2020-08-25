@@ -2,13 +2,29 @@
 open Stroodel.Syntax
 %}
 
+// These tokens are used in the parser rules below and
+// are known by both the parser and the lexer. First,
+// all the keywords:
+%token THE
+%token LIST
+%token NAT
+%token NIL
+%token CONS
+%token SAME
+%token SOLE
+
+// and the built-in types:
+// TODO: should they rather be in a "prelude"?
 %token VARIABLEREFERENCE
 %token ATOMTYPE
 %token ATOMLITERAL
 
-%token <string> SYMBOL
+// identifier:
+%token <string> ID // TODO: should be a (string, Error.Info) tuple?
 
-// symbolic tokens:
+// symbols:
+%token LPAREN
+%token RPAREN
 %token TICK
 %token EOF
 
@@ -21,5 +37,5 @@ open Stroodel.Syntax
 start: File EOF { $1 }
 
 File:
-	| TICK SYMBOL				{ AtomLiteral ("'" + $2) }
-	| VARIABLEREFERENCE SYMBOL	{ VariableReference $2 }
+	| TICK ID				{ AtomLiteral ("'" + $2) }
+	| VARIABLEREFERENCE ID	{ VariableReference $2 }

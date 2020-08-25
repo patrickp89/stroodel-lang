@@ -22,3 +22,15 @@ let TestTrivialTypes () =
     let code = "sole"
     let t = TypeChecker.parse code
     Assert.That(t, Is.EqualTo "(the Trivial sole)")
+
+[<Test>]
+[<Ignore("Not yet implemented")>]
+let TestAbsurdTypes () =
+    let code =
+        "(the (→ Absurd" +
+        "         Nat)" +
+        "  (λ (nope)" +
+        "    (ind-Absurd nope Nat)))"
+    let expr = TypeChecker.parse code
+    Assert.That(expr, Is.EqualTo (AtomLiteral "'TODO"))
+    // TODO: let t = TypeChecker.check code ...
