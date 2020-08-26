@@ -2,6 +2,9 @@
 open Stroodel.Syntax
 %}
 
+// TODO: make all tokens like
+// %token <Util.Error.Info> THIS
+
 // These tokens are used in the parser rules below and
 // are known by both the parser and the lexer. First,
 // all the keywords:
@@ -12,15 +15,15 @@ open Stroodel.Syntax
 %token CONS
 %token SAME
 %token SOLE
+%token ZERO
 
-// and the built-in types:
-// TODO: should they rather be in a "prelude"?
 %token VARIABLEREFERENCE
-%token ATOMTYPE
+%token ATOM
 %token ATOMLITERAL
 
 // identifier:
-%token <string> ID // TODO: should be a (string, Error.Info) tuple?
+%token <string> ID
+%token <int> INTV
 
 // symbols:
 %token LPAREN
@@ -28,14 +31,18 @@ open Stroodel.Syntax
 %token TICK
 %token EOF
 
-// the parser returns an _Expr_:
+// the parser returns a Syntax.Expr:
 %start start
-%type < Expr > start
+%type <Expr> start
 
 %%
 
-start: File EOF { $1 }
+start: expr EOF { $1 }
 
-File:
+expr:
+	| THE expr expr			{ The ($2, $3) }
 	| TICK ID				{ AtomLiteral ("'" + $2) }
 	| VARIABLEREFERENCE ID	{ VariableReference $2 }
+	| INTV					{ Nat $1 }
+	| SOLE					{ Sole }
+	| ZERO					{ Zero }
