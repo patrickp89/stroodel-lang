@@ -25,19 +25,30 @@ let TestTrivialTypes () =
     // TODO: Assert.That(t, Is.EqualTo "(the Trivial sole)")
 
 [<Test>]
-let TestNaturalNumbers () =
+let TestSingleDigitNaturalNumbers () =
     let one = "1"
     let expr = TypeChecker.parse one
     Assert.That(expr, Is.EqualTo (Nat 1))
     // TODO: let t = TypeChecker.check one
-    // TODO: Assert.That(t, Is.EqualTo "(the Trivial sole)")
+    // TODO: Assert.That(t, Is.EqualTo "(the Nat 1)")
+
+[<Test>]
+let TestSpecialNaturalNumbers () =
     let zero = "zero"
     let actExpr = TypeChecker.parse zero
     let expExpr = Zero
     Assert.That(actExpr, Is.EqualTo expExpr)
-    // TODO: let expType = "(the Nat 0)"
+    // TODO: let expType = "(the Nat 0)" // TODO: what is the "normalzied" version? Zero or Nat 0?
     // TODO: let actType = TypeChecker.check zero
     // TODO: Assert.That(actType, Is.EqualTo expType)
+
+[<Test>]
+let TestMultiDigitNaturalNumbers () =
+    let one = "16"
+    let expr = TypeChecker.parse one
+    Assert.That(expr, Is.EqualTo (Nat 16))
+    // TODO: let t = TypeChecker.check one
+    // TODO: Assert.That(t, Is.EqualTo "(the Nat 16)")
 
 [<Test>]
 [<Ignore("Not yet implemented")>]

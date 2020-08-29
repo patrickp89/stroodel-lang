@@ -7,10 +7,11 @@ module Syntax =
 
     // Expressions:
     type Expr =
-    | The of (Expr * Expr) // Type annotation
-    | VariableReference of Symbol
+    | The of Expr * Expr    // Type annotation
+    | Var of Symbol         // Variable reference
     | Atom                  // Atom type
-    | AtomLiteral of string
+    | AtomLiteral of string // An 'atom-literal
+    | Lambda of Expr * Expr // A function
     | Nat of int            // Natural number type
     | Zero                  // 0
     | Trivial               // Unit type

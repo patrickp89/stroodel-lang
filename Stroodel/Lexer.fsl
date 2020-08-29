@@ -27,7 +27,9 @@ let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
     ("sole", fun _ -> Parser.SOLE);
     ("zero", fun _ -> Parser.ZERO);
     ("(", fun _ -> Parser.LPAREN);
-    (")", fun _ -> Parser.RPAREN)]
+    (")", fun _ -> Parser.RPAREN);
+    ("λ", fun _ -> Parser.LAMBDA);
+    ("lambda", fun _ -> Parser.LAMBDA)]
   |> Map.ofList
 
 // Looks up the build function from our hash table
@@ -43,7 +45,6 @@ let char        = ['a'-'z' 'A'-'Z']
 let digit       = ['0'-'9']
 let whitespace  = [' ' '\t' ]
 let newline     = ('\n' | '\r' '\n')
-let id          = char+ ('-' char+)*
 let arrow       = '→'
 let bigpi       = 'Π'
 let bigsigma    = 'Σ'
@@ -52,8 +53,8 @@ let universe    = 'U'
 
 // tokenizer rules:
 rule tokenstream = parse
-| id                { createId (info lexbuf) (text lexbuf) }
-| digit             { Parser.INTV (int lexbuf) }
+| char+ ('-' char+)*    { createId (info lexbuf) (text lexbuf) }
+| digit+                { Parser.INTV (int lexbuf) }
 | "'"               { Parser.TICK}
 | whitespace        { tokenstream lexbuf }
 | newline           { newline lexbuf; tokenstream lexbuf }
