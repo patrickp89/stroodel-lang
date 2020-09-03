@@ -9,8 +9,9 @@ module Syntax =
     type Expr =
     | The of Expr * Expr    // Type annotation
     | Var of Symbol         // Variable reference
-    | Atom                  // Atom type
+    | Atom                  // The Atom type
     | AtomLiteral of string // An 'atom-literal
+    | Pair of Expr * Expr   // A Pair(B, C)
     | Lambda of Expr * Expr // A function
     | Nat of int            // Natural number type
     | Zero                  // 0

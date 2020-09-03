@@ -52,12 +52,35 @@ let TestMultiDigitNaturalNumbers () =
 
 [<Test>]
 [<Ignore("Not yet implemented")>]
+let TestPairs () =
+    let code =
+        "(the (Pair Atom Atom)" +
+        "  (cons 'foo 'bar))"
+    let expr = TypeChecker.parse code
+    Assert.That(expr, Is.EqualTo (Pair ((AtomLiteral "foo"), (AtomLiteral "bar"))))
+    // TODO: let t = TypeChecker.check code
+    // TODO: Assert.That(t, Is.EqualTo "(the (Pair Atom Atom) (cons 'foo 'bar))")
+
+[<Test>]
+[<Ignore("Not yet implemented")>]
 let TestAbsurdTypes () =
     let code =
         "(the (→ Absurd" +
         "         Nat)" +
         "  (λ (nope)" +
         "    (ind-Absurd nope Nat)))"
+    let expr = TypeChecker.parse code
+    Assert.That(expr, Is.EqualTo (AtomLiteral "'TODO"))
+    // TODO: let t = TypeChecker.check code ...
+
+[<Test>]
+[<Ignore("Not yet implemented")>]
+let TestFunctionTypes () =
+    let code =
+        "(the (Π ((a Atom))" +
+        "       (Pair Atom Atom))" +
+        "  (λ (flavor)" +
+        "    (cons flavor 'lentils)))"
     let expr = TypeChecker.parse code
     Assert.That(expr, Is.EqualTo (AtomLiteral "'TODO"))
     // TODO: let t = TypeChecker.check code ...

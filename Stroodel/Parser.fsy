@@ -1,35 +1,35 @@
 %{
 open Stroodel.Syntax
+open Stroodel.Util
 %}
-
-// TODO: make all tokens like
-// %token <Util.Error.Info> THIS
 
 // These tokens are used in the parser rules below and
 // are known by both the parser and the lexer. First,
 // all the keywords:
-%token THE
-%token LIST
-%token LAMBDA
-%token NAT
-%token NIL
-%token CONS
-%token SAME
-%token SOLE
-%token ZERO
+%token <Error.Info> THE
+%token <Error.Info> ATOM
+%token <Error.Info> PAIR
+%token <Error.Info> LIST
+%token <Error.Info> LAMBDA
+%token <Error.Info> NAT
+%token <Error.Info> NIL
+%token <Error.Info> CONS
+%token <Error.Info> SAME
+%token <Error.Info> SOLE
+%token <Error.Info> ZERO
 
-%token ATOM
-%token ATOMLITERAL
+%token <Error.Info> ATOMLITERAL
 
 // identifier:
 %token <string> ID
 %token <int> INTV
+// TODO: identifiers should be of type <string * Error.Info> etc.!
 
 // symbols:
-%token LPAREN
-%token RPAREN
-%token TICK
-%token EOF
+%token <Error.Info> LPAREN
+%token <Error.Info> RPAREN
+%token <Error.Info> TICK
+%token <Error.Info> EOF
 
 // the parser returns a Syntax.Expr:
 %start start
@@ -42,8 +42,10 @@ start: expr EOF { $1 }
 expr:
 	| THE expr expr			{ The ($2, $3) }
 	| LAMBDA expr expr		{ Lambda ($2, $3) }
+	| PAIR expr expr		{ Pair ($2, $3) }
 	| TICK ID				{ AtomLiteral ("'" + $2) }
 	| ID					{ Var $1 }
 	| INTV					{ Nat $1 }
+	| ATOM					{ Atom }
 	| SOLE					{ Sole }
 	| ZERO					{ Zero }

@@ -11,25 +11,34 @@ let int (lexbuf: LexBuffer<_>) =
 
 let dummyInfo = Error.Info.UNKNOWN
 
-let info _ =
-  dummyInfo // TODO: create a proper Error.Info!
+let info (lexbuf: LexBuffer<_>) =
+  let f = "" // TODO: use lexbuf.StartPos.FileName ! 
+  let l = lexbuf.StartPos.Line
+  let c = lexbuf.StartPos.AbsoluteOffset // TODO: is this the offset in the line or from the very start?
+  Error.Info.FI(f, l, c)
+
+let printError (i: Error.Info) =
+  match i with
+  | Error.Info.UNKNOWN -> "ParseError at unknown position!"
+  | Error.Info.FI(_, l, c) -> "ParseError at line " + (string l) + " , offset " + (string c)
 
 let newline (lexbuf: LexBuffer<_>) =
   lexbuf.StartPos <- lexbuf.StartPos.NextLine
 
 let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
-  [("the", fun _ -> Parser.THE);
-    ("List", fun _ -> Parser.LIST);
-    ("Nat", fun _ -> Parser.NAT);
-    ("nil", fun _ -> Parser.NIL);
-    ("cons", fun _ -> Parser.CONS);
-    ("same", fun _ -> Parser.SAME);
-    ("sole", fun _ -> Parser.SOLE);
-    ("zero", fun _ -> Parser.ZERO);
-    ("(", fun _ -> Parser.LPAREN);
-    (")", fun _ -> Parser.RPAREN);
-    ("λ", fun _ -> Parser.LAMBDA);
-    ("lambda", fun _ -> Parser.LAMBDA)]
+  [("the", fun i -> Parser.THE i);
+    ("Atom", fun i -> Parser.ATOM i);
+    ("List", fun i -> Parser.LIST i);
+    ("Nat", fun i -> Parser.NAT i);
+    ("nil", fun i -> Parser.NIL i);
+    ("cons", fun i -> Parser.CONS i);
+    ("same", fun i -> Parser.SAME i);
+    ("sole", fun i -> Parser.SOLE i);
+    ("zero", fun i -> Parser.ZERO i);
+    ("(", fun i -> Parser.LPAREN i);
+    (")", fun i -> Parser.RPAREN i);
+    ("λ", fun i -> Parser.LAMBDA i);
+    ("lambda", fun i -> Parser.LAMBDA i)]
   |> Map.ofList
 
 // Looks up the build function from our hash table
@@ -55,8 +64,8 @@ let universe    = 'U'
 rule tokenstream = parse
 | char+ ('-' char+)*    { createId (info lexbuf) (text lexbuf) }
 | digit+                { Parser.INTV (int lexbuf) }
-| "'"               { Parser.TICK}
-| whitespace        { tokenstream lexbuf }
-| newline           { newline lexbuf; tokenstream lexbuf }
-| eof               { Parser.EOF }
-| _                 { failwith ("ParseError" + (text lexbuf)) }
+| "'"                   { Parser.TICK (info lexbuf) }
+| whitespace            { tokenstream lexbuf }
+//| newline { newline lexbuf; tokenstream lexbuf }
+| eof                   { Parser.EOF (info lexbuf) }
+| _                     { failwith (printError (info lexbuf)) }
