@@ -28,7 +28,7 @@ let TestTrivialTypes () =
 let TestSingleDigitNaturalNumbers () =
     let one = "1"
     let expr = TypeChecker.parse one
-    Assert.That(expr, Is.EqualTo (Nat 1))
+    Assert.That(expr, Is.EqualTo (NatLiteral 1))
     // TODO: let t = TypeChecker.check one
     // TODO: Assert.That(t, Is.EqualTo "(the Nat 1)")
 
@@ -46,18 +46,32 @@ let TestSpecialNaturalNumbers () =
 let TestMultiDigitNaturalNumbers () =
     let one = "16"
     let expr = TypeChecker.parse one
-    Assert.That(expr, Is.EqualTo (Nat 16))
+    Assert.That(expr, Is.EqualTo (NatLiteral 16))
     // TODO: let t = TypeChecker.check one
     // TODO: Assert.That(t, Is.EqualTo "(the Nat 16)")
 
 [<Test>]
-[<Ignore("Not yet implemented")>]
 let TestPairs () =
+    let pairUniverseCode = "(Pair Atom Atom)"
+    let  pairUniverseExpr = TypeChecker.parse pairUniverseCode
+    Assert.That(pairUniverseExpr, Is.EqualTo (Pair (Atom, Atom)))
+    // TODO: let pairUniverseType = TypeChecker.check pairUniverseCode
+    // TODO: Assert.That(pairUniverseType, Is.EqualTo "(the U (Pair Atom Atom))")
+
+[<Test>]
+let TestSimpleTypeAnnotations () =
+    let nilNatListCode =
+        "(the (List Nat)" +
+        "    nil)"
+    let nilNatListExpr = TypeChecker.parse nilNatListCode
+    Assert.That(nilNatListExpr, Is.EqualTo (The ((ListType Nat), Nil)))
+    (*
     let code =
         "(the (Pair Atom Atom)" +
         "  (cons 'foo 'bar))"
     let expr = TypeChecker.parse code
     Assert.That(expr, Is.EqualTo (Pair ((AtomLiteral "foo"), (AtomLiteral "bar"))))
+    *)
     // TODO: let t = TypeChecker.check code
     // TODO: Assert.That(t, Is.EqualTo "(the (Pair Atom Atom) (cons 'foo 'bar))")
 

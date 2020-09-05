@@ -13,11 +13,14 @@ module Syntax =
     | AtomLiteral of string // An 'atom-literal
     | Pair of Expr * Expr   // A Pair(B, C)
     | Lambda of Expr * Expr // A function
-    | Nat of int            // Natural number type
+    | Nat                   // The Nat type
+    | NatLiteral of int     // An acutal natural number
     | Zero                  // 0
-    | Trivial               // Unit type
+    | ListType of Expr      // The List type
+    | Trivial               // The Unit type
     | Sole                  // Unit constructor
-    | Absurd                // Empty type
+    | Absurd                // The empty type
+    | Nil                   // nil, an empty list
 
     // There also is toplevel syntax for declararations:
     type Declarations =

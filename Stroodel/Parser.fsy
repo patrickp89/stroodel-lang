@@ -40,12 +40,15 @@ open Stroodel.Util
 start: expr EOF { $1 }
 
 expr:
-	| THE expr expr			{ The ($2, $3) }
-	| LAMBDA expr expr		{ Lambda ($2, $3) }
-	| PAIR expr expr		{ Pair ($2, $3) }
+	| LPAREN THE expr expr RPAREN	{ The ($3, $4) }
+	| LPAREN PAIR expr expr RPAREN	{ Pair ($3, $4) }
+	| LPAREN LIST expr RPAREN		{ ListType $3 }
+	| LAMBDA expr expr				{ Lambda ($2, $3) }
 	| TICK ID				{ AtomLiteral ("'" + $2) }
 	| ID					{ Var $1 }
-	| INTV					{ Nat $1 }
+	| INTV					{ NatLiteral $1 }
 	| ATOM					{ Atom }
 	| SOLE					{ Sole }
 	| ZERO					{ Zero }
+	| NAT							{ Nat }
+	| NIL							{ Nil }

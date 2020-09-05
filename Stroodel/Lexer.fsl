@@ -28,6 +28,7 @@ let newline (lexbuf: LexBuffer<_>) =
 let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
   [("the", fun i -> Parser.THE i);
     ("Atom", fun i -> Parser.ATOM i);
+    ("Pair", fun i -> Parser.PAIR i);
     ("List", fun i -> Parser.LIST i);
     ("Nat", fun i -> Parser.NAT i);
     ("nil", fun i -> Parser.NIL i);
@@ -35,8 +36,6 @@ let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
     ("same", fun i -> Parser.SAME i);
     ("sole", fun i -> Parser.SOLE i);
     ("zero", fun i -> Parser.ZERO i);
-    ("(", fun i -> Parser.LPAREN i);
-    (")", fun i -> Parser.RPAREN i);
     ("λ", fun i -> Parser.LAMBDA i);
     ("lambda", fun i -> Parser.LAMBDA i)]
   |> Map.ofList
@@ -65,6 +64,8 @@ rule tokenstream = parse
 | char+ ('-' char+)*    { createId (info lexbuf) (text lexbuf) }
 | digit+                { Parser.INTV (int lexbuf) }
 | "'"                   { Parser.TICK (info lexbuf) }
+| "("                  { Parser.LPAREN (info lexbuf) }
+| ")"                  { Parser.RPAREN (info lexbuf) }
 | whitespace            { tokenstream lexbuf }
 //| newline { newline lexbuf; tokenstream lexbuf }
 | eof                   { Parser.EOF (info lexbuf) }
