@@ -12,6 +12,7 @@ module Syntax =
     | Atom                  // The Atom type
     | AtomLiteral of string // An 'atom-literal
     | Pair of Expr * Expr   // A Pair(B, C)
+    | Cons of Expr * Expr   // Constructor of Pairs
     | Lambda of Expr * Expr // A function
     | Nat                   // The Nat type
     | NatLiteral of int     // An acutal natural number

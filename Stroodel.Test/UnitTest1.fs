@@ -8,72 +8,71 @@ open TypeChecker
 let Setup () =
     ()
 
+let parseCode code expExpr =
+    match TypeChecker.parse code with
+    | Ok expr -> Assert.That(expr, Is.EqualTo expExpr)
+    | Error e -> Assert.Fail(e)
+
 [<Test>]
 let TestAtoms () =
     let code = "'quiche-deluxe"
-    let expr = TypeChecker.parse code
-    Assert.That(expr, Is.EqualTo (AtomLiteral "'quiche-deluxe"))
+    parseCode code (AtomLiteral "'quiche-deluxe")
     // TODO: let t = TypeChecker.check code
     // TODO: Assert.That(t, Is.EqualTo "(the Atom ''quiche-deluxe)")
 
 [<Test>]
 let TestTrivialTypes () =
     let code = "sole"
-    let expr = TypeChecker.parse code
-    Assert.That(expr, Is.EqualTo (Sole))
+    parseCode code (Sole)
     // TODO: let t = TypeChecker.check code
     // TODO: Assert.That(t, Is.EqualTo "(the Trivial sole)")
 
 [<Test>]
 let TestSingleDigitNaturalNumbers () =
     let one = "1"
-    let expr = TypeChecker.parse one
-    Assert.That(expr, Is.EqualTo (NatLiteral 1))
+    parseCode one (NatLiteral 1)
     // TODO: let t = TypeChecker.check one
     // TODO: Assert.That(t, Is.EqualTo "(the Nat 1)")
 
 [<Test>]
 let TestSpecialNaturalNumbers () =
     let zero = "zero"
-    let actExpr = TypeChecker.parse zero
-    let expExpr = Zero
-    Assert.That(actExpr, Is.EqualTo expExpr)
+    parseCode zero Zero
     // TODO: let expType = "(the Nat 0)" // TODO: what is the "normalzied" version? Zero or Nat 0?
     // TODO: let actType = TypeChecker.check zero
     // TODO: Assert.That(actType, Is.EqualTo expType)
 
 [<Test>]
 let TestMultiDigitNaturalNumbers () =
-    let one = "16"
-    let expr = TypeChecker.parse one
-    Assert.That(expr, Is.EqualTo (NatLiteral 16))
+    let number = "16"
+    parseCode number (NatLiteral 16)
     // TODO: let t = TypeChecker.check one
     // TODO: Assert.That(t, Is.EqualTo "(the Nat 16)")
 
 [<Test>]
 let TestPairs () =
     let pairUniverseCode = "(Pair Atom Atom)"
-    let  pairUniverseExpr = TypeChecker.parse pairUniverseCode
-    Assert.That(pairUniverseExpr, Is.EqualTo (Pair (Atom, Atom)))
+    parseCode pairUniverseCode (Pair (Atom, Atom))
     // TODO: let pairUniverseType = TypeChecker.check pairUniverseCode
     // TODO: Assert.That(pairUniverseType, Is.EqualTo "(the U (Pair Atom Atom))")
+    let code =
+        "(the (Pair Atom Atom)\
+          (cons 'foo 'bar))"
+    let expExpr =
+        The (Pair (Atom, Atom),
+            Cons (AtomLiteral "'foo", AtomLiteral "'bar"))
+    parseCode code expExpr
+    // TODO: let t = TypeChecker.check code
+    // TODO: Assert.That(t, Is.EqualTo "(the (Pair Atom Atom) (cons 'foo 'bar))")
 
 [<Test>]
 let TestSimpleTypeAnnotations () =
     let nilNatListCode =
         "(the (List Nat)" +
         "    nil)"
-    let nilNatListExpr = TypeChecker.parse nilNatListCode
-    Assert.That(nilNatListExpr, Is.EqualTo (The ((ListType Nat), Nil)))
-    (*
-    let code =
-        "(the (Pair Atom Atom)" +
-        "  (cons 'foo 'bar))"
-    let expr = TypeChecker.parse code
-    Assert.That(expr, Is.EqualTo (Pair ((AtomLiteral "foo"), (AtomLiteral "bar"))))
-    *)
-    // TODO: let t = TypeChecker.check code
-    // TODO: Assert.That(t, Is.EqualTo "(the (Pair Atom Atom) (cons 'foo 'bar))")
+    parseCode nilNatListCode (The ((ListType Nat), Nil))
+    // TODO: let nilNatListType = TypeChecker.check nilNatListCode
+    // TODO: Assert.That(nilNatListType, Is.EqualTo nilNatListCode) // yes, the type annotation is already correct!
 
 [<Test>]
 [<Ignore("Not yet implemented")>]
@@ -83,8 +82,7 @@ let TestAbsurdTypes () =
         "         Nat)" +
         "  (λ (nope)" +
         "    (ind-Absurd nope Nat)))"
-    let expr = TypeChecker.parse code
-    Assert.That(expr, Is.EqualTo (AtomLiteral "'TODO"))
+    parseCode code (AtomLiteral "'TODO")
     // TODO: let t = TypeChecker.check code ...
 
 [<Test>]
@@ -95,6 +93,5 @@ let TestFunctionTypes () =
         "       (Pair Atom Atom))" +
         "  (λ (flavor)" +
         "    (cons flavor 'lentils)))"
-    let expr = TypeChecker.parse code
-    Assert.That(expr, Is.EqualTo (AtomLiteral "'TODO"))
+    parseCode code (AtomLiteral "'TODO")
     // TODO: let t = TypeChecker.check code ...

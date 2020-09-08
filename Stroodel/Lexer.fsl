@@ -9,23 +9,14 @@ let int (lexbuf: LexBuffer<_>) =
   let s = LexBuffer<_>.LexemeString lexbuf
   int s
 
-let dummyInfo = Error.Info.UNKNOWN
+let dummyInfo = Info.UNKNOWN
 
-let info (lexbuf: LexBuffer<_>) =
-  let f = "" // TODO: use lexbuf.StartPos.FileName ! 
-  let l = lexbuf.StartPos.Line
-  let c = lexbuf.StartPos.AbsoluteOffset // TODO: is this the offset in the line or from the very start?
-  Error.Info.FI(f, l, c)
-
-let printError (i: Error.Info) =
+let printError (i: Info) =
   match i with
-  | Error.Info.UNKNOWN -> "ParseError at unknown position!"
-  | Error.Info.FI(_, l, c) -> "ParseError at line " + (string l) + " , offset " + (string c)
+  | Info.UNKNOWN -> "ParseError at unknown position!"
+  | Info.FI(_, l, c) -> "ParseError at line " + (string l) + " , offset " + (string c)
 
-let newline (lexbuf: LexBuffer<_>) =
-  lexbuf.StartPos <- lexbuf.StartPos.NextLine
-
-let keywordsAndSymbols : Map<string,(Error.Info -> Parser.token)> =
+let keywordsAndSymbols : Map<string,(Info -> Parser.token)> =
   [("the", fun i -> Parser.THE i);
     ("Atom", fun i -> Parser.ATOM i);
     ("Pair", fun i -> Parser.PAIR i);
@@ -64,9 +55,9 @@ rule tokenstream = parse
 | char+ ('-' char+)*    { createId (info lexbuf) (text lexbuf) }
 | digit+                { Parser.INTV (int lexbuf) }
 | "'"                   { Parser.TICK (info lexbuf) }
-| "("                  { Parser.LPAREN (info lexbuf) }
-| ")"                  { Parser.RPAREN (info lexbuf) }
+| "("                   { Parser.LPAREN (info lexbuf) }
+| ")"                   { Parser.RPAREN (info lexbuf) }
 | whitespace            { tokenstream lexbuf }
-//| newline { newline lexbuf; tokenstream lexbuf }
+| newline               { lexbuf.StartPos <- lexbuf.StartPos.NextLine; tokenstream lexbuf }
 | eof                   { Parser.EOF (info lexbuf) }
 | _                     { failwith (printError (info lexbuf)) }

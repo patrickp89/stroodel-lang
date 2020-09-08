@@ -6,30 +6,30 @@ open Stroodel.Util
 // These tokens are used in the parser rules below and
 // are known by both the parser and the lexer. First,
 // all the keywords:
-%token <Error.Info> THE
-%token <Error.Info> ATOM
-%token <Error.Info> PAIR
-%token <Error.Info> LIST
-%token <Error.Info> LAMBDA
-%token <Error.Info> NAT
-%token <Error.Info> NIL
-%token <Error.Info> CONS
-%token <Error.Info> SAME
-%token <Error.Info> SOLE
-%token <Error.Info> ZERO
+%token <Info> THE
+%token <Info> ATOM
+%token <Info> PAIR
+%token <Info> LIST
+%token <Info> LAMBDA
+%token <Info> NAT
+%token <Info> NIL
+%token <Info> CONS
+%token <Info> SAME
+%token <Info> SOLE
+%token <Info> ZERO
 
-%token <Error.Info> ATOMLITERAL
+%token <Info> ATOMLITERAL
 
 // identifier:
 %token <string> ID
 %token <int> INTV
-// TODO: identifiers should be of type <string * Error.Info> etc.!
+// TODO: identifiers should be of type <string * Info> etc.!
 
 // symbols:
-%token <Error.Info> LPAREN
-%token <Error.Info> RPAREN
-%token <Error.Info> TICK
-%token <Error.Info> EOF
+%token <Info> LPAREN
+%token <Info> RPAREN
+%token <Info> TICK
+%token <Info> EOF
 
 // the parser returns a Syntax.Expr:
 %start start
@@ -42,6 +42,7 @@ start: expr EOF { $1 }
 expr:
 	| LPAREN THE expr expr RPAREN	{ The ($3, $4) }
 	| LPAREN PAIR expr expr RPAREN	{ Pair ($3, $4) }
+	| LPAREN CONS expr expr RPAREN	{ Cons ($3, $4) }
 	| LPAREN LIST expr RPAREN		{ ListType $3 }
 	| LAMBDA expr expr				{ Lambda ($2, $3) }
 	| TICK ID				{ AtomLiteral ("'" + $2) }
