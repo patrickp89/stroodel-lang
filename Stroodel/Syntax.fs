@@ -13,7 +13,9 @@ module Syntax =
     | AtomLiteral of string // An 'atom-literal
     | Pair of Expr * Expr   // A Pair(B, C)
     | Cons of Expr * Expr   // Constructor of Pairs
-    | Lambda of Expr * Expr // A function
+    | Pi of Expr * Expr     // A function type // TODO: the first Expr should rather be an Expr list!
+    | ArgumentDecl of Symbol * Expr // e.g. a "(a Atom)" in a Pi type
+    | Lambda of Symbol * Expr       // A function // TODO: should rather be a list of symbols!
     | Nat                   // The Nat type
     | NatLiteral of int     // An acutal natural number
     | Zero                  // 0

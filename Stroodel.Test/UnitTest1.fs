@@ -59,8 +59,10 @@ let TestPairs () =
         "(the (Pair Atom Atom)\
           (cons 'foo 'bar))"
     let expExpr =
-        The (Pair (Atom, Atom),
-            Cons (AtomLiteral "'foo", AtomLiteral "'bar"))
+        The (
+            Pair (Atom, Atom),
+            Cons (AtomLiteral "'foo", AtomLiteral "'bar")
+        )
     parseCode code expExpr
     // TODO: let t = TypeChecker.check code
     // TODO: Assert.That(t, Is.EqualTo "(the (Pair Atom Atom) (cons 'foo 'bar))")
@@ -86,12 +88,30 @@ let TestAbsurdTypes () =
     // TODO: let t = TypeChecker.check code ...
 
 [<Test>]
-[<Ignore("Not yet implemented")>]
 let TestFunctionTypes () =
+    let piUniverseCode =
+        "(Π ((a Atom))\
+           (Pair Atom Atom))"
+    let piExpr =
+        Pi (
+            ArgumentDecl ("a", Atom),
+            Pair (Atom, Atom)
+        )
+    parseCode piUniverseCode piExpr
+    // TODO: let uType = TypeChecker.check piUniverseCode ...
+    let lambdaCode = "(λ (flavor) (cons flavor 'lentils))"
+    let lambdaExpr =
+        Lambda (
+            "flavor",
+            Cons ((Var "flavor") , (AtomLiteral "'lentils"))
+        )
+    parseCode lambdaCode lambdaExpr
+    // TODO: let lType = TypeChecker.check lambdaCode ...
     let code =
-        "(the (Π ((a Atom))" +
-        "       (Pair Atom Atom))" +
-        "  (λ (flavor)" +
-        "    (cons flavor 'lentils)))"
-    parseCode code (AtomLiteral "'TODO")
+        "(the (Π ((a Atom))\
+               (Pair Atom Atom))\
+          (λ (flavor)\
+            (cons flavor 'lentils)))"
+    let expr = The (piExpr, lambdaExpr)
+    parseCode code expr
     // TODO: let t = TypeChecker.check code ...

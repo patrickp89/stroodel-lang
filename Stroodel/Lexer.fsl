@@ -16,7 +16,7 @@ let printError (i: Info) =
   | Info.UNKNOWN -> "ParseError at unknown position!"
   | Info.FI(_, l, c) -> "ParseError at line " + (string l) + " , offset " + (string c)
 
-let keywordsAndSymbols : Map<string,(Info -> Parser.token)> =
+let keywords : Map<string,(Info -> Parser.token)> =
   [("the", fun i -> Parser.THE i);
     ("Atom", fun i -> Parser.ATOM i);
     ("Pair", fun i -> Parser.PAIR i);
@@ -27,14 +27,14 @@ let keywordsAndSymbols : Map<string,(Info -> Parser.token)> =
     ("same", fun i -> Parser.SAME i);
     ("sole", fun i -> Parser.SOLE i);
     ("zero", fun i -> Parser.ZERO i);
-    ("λ", fun i -> Parser.LAMBDA i);
-    ("lambda", fun i -> Parser.LAMBDA i)]
+    ("Lambda", fun i -> Parser.LAMBDA i);
+    ("Pi", fun i -> Parser.PI i)]
   |> Map.ofList
 
 // Looks up the build function from our hash table
 // or creates an arbitrary ID:
 let createId i s =
-  match Map.tryFind s keywordsAndSymbols with
+  match Map.tryFind s keywords with
   | Some f -> f i
   | None -> Parser.ID s
 }
@@ -45,9 +45,7 @@ let digit       = ['0'-'9']
 let whitespace  = [' ' '\t' ]
 let newline     = ('\n' | '\r' '\n')
 let arrow       = '→'
-let bigpi       = 'Π'
 let bigsigma    = 'Σ'
-let lambda      = 'λ'
 let universe    = 'U'
 
 // tokenizer rules:
@@ -57,6 +55,8 @@ rule tokenstream = parse
 | "'"                   { Parser.TICK (info lexbuf) }
 | "("                   { Parser.LPAREN (info lexbuf) }
 | ")"                   { Parser.RPAREN (info lexbuf) }
+| "Π"                   { Parser.PI (info lexbuf) }
+| "λ"                   { Parser.LAMBDA (info lexbuf) }
 | whitespace            { tokenstream lexbuf }
 | newline               { lexbuf.StartPos <- lexbuf.StartPos.NextLine; tokenstream lexbuf }
 | eof                   { Parser.EOF (info lexbuf) }

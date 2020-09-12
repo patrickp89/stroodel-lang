@@ -16,7 +16,7 @@ module TypeChecker =
         let lexbuf = LexBuffer<char>.FromString code
         try
             let expr = Parser.start Lexer.tokenstream lexbuf
-            printfn "there are %A tokens" expr
+            printfn "The AST is: %A" expr
             Ok expr
         with
         | e -> Error (printError lexbuf e)
