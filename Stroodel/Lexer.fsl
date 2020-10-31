@@ -27,7 +27,7 @@ let keywords : Map<string,(Info -> Parser.token)> =
     ("same", fun i -> Parser.SAME i);
     ("sole", fun i -> Parser.SOLE i);
     ("zero", fun i -> Parser.ZERO i);
-    ("Lambda", fun i -> Parser.LAMBDA i);
+    ("lambda", fun i -> Parser.LAMBDA i);
     ("Pi", fun i -> Parser.PI i)]
   |> Map.ofList
 

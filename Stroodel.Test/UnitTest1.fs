@@ -76,42 +76,54 @@ let TestSimpleTypeAnnotations () =
     // TODO: let nilNatListType = TypeChecker.check nilNatListCode
     // TODO: Assert.That(nilNatListType, Is.EqualTo nilNatListCode) // yes, the type annotation is already correct!
 
-[<Test>]
-[<Ignore("Not yet implemented")>]
-let TestAbsurdTypes () =
-    let code =
-        "(the (→ Absurd" +
-        "         Nat)" +
-        "  (λ (nope)" +
-        "    (ind-Absurd nope Nat)))"
-    parseCode code (AtomLiteral "'TODO")
-    // TODO: let t = TypeChecker.check code ...
+let flavorTestLambdaExpr =
+    Lambda (
+        "flavor",
+        Cons ((Var "flavor") , (AtomLiteral "'lentils"))
+    )
+
+let singleArgTestPiExpr =
+    Pi (
+        ArgumentDecl ("a", Atom),
+        Pair (Atom, Atom)
+    )
 
 [<Test>]
 let TestFunctionTypes () =
     let piUniverseCode =
         "(Π ((a Atom))\
            (Pair Atom Atom))"
-    let piExpr =
-        Pi (
-            ArgumentDecl ("a", Atom),
-            Pair (Atom, Atom)
-        )
-    parseCode piUniverseCode piExpr
+    parseCode piUniverseCode singleArgTestPiExpr
     // TODO: let uType = TypeChecker.check piUniverseCode ...
     let lambdaCode = "(λ (flavor) (cons flavor 'lentils))"
-    let lambdaExpr =
-        Lambda (
-            "flavor",
-            Cons ((Var "flavor") , (AtomLiteral "'lentils"))
-        )
-    parseCode lambdaCode lambdaExpr
+    parseCode lambdaCode flavorTestLambdaExpr
     // TODO: let lType = TypeChecker.check lambdaCode ...
     let code =
         "(the (Π ((a Atom))\
                (Pair Atom Atom))\
           (λ (flavor)\
             (cons flavor 'lentils)))"
-    let expr = The (piExpr, lambdaExpr)
+    let expr = The (singleArgTestPiExpr, flavorTestLambdaExpr)
     parseCode code expr
+    // TODO: let t = TypeChecker.check code ...
+
+[<Test>]
+let TestGreekSymbolAliases () =
+    let code =
+        "(the (Pi ((a Atom))\
+               (Pair Atom Atom))\
+          (lambda (flavor)\
+            (cons flavor 'lentils)))"
+    let expr = The (singleArgTestPiExpr, flavorTestLambdaExpr)
+    parseCode code expr
+
+[<Test>]
+[<Ignore("Not yet implemented")>]
+let TestAbsurdTypes () =
+    let code =
+        "(the (→ Absurd\
+                 Nat)\
+          (λ (nope)\
+            (ind-Absurd nope Nat)))"
+    parseCode code (AtomLiteral "'TODO")
     // TODO: let t = TypeChecker.check code ...

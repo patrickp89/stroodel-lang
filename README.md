@@ -1,5 +1,5 @@
 # stroodel-lang
-[![Build Status](https://travis-ci.org/patrickp89/stroodel-lang.svg?branch=master)](https://travis-ci.org/patrickp89/stroodel-lang)
+[![Build Status](https://travis-ci.com/patrickp89/stroodel-lang.svg?branch=master)](https://travis-ci.com/patrickp89/stroodel-lang)
 
 A type checker implementation for Friedman and Christiansen's
 [Pie](https://github.com/the-little-typer/pie) language.
